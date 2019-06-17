@@ -22,6 +22,16 @@ class Board{
     board[4][3] = -1;
   }
 
+  Board(Board b){
+    for(int i = 0; i < 8; i++){
+      for(int j = 0; j < 8; j++){
+        board[i][j] = b.board[i][j];
+      }
+    }
+    turn = b.turn;
+    empty_count = b.empty_count;
+  }
+
   void display(){
     background(100, 100, 100);
     // first display the checkerboard
@@ -110,6 +120,44 @@ class Board{
     }
   }
 
+  void place(Square s){
+    place(s.x_index, s.y_index);
+  }
+
+  // this function skips some of the checks because they are not important for
+  // the ai. Returns the value of the winner if it exists or 0 if not
+  private int ai_place(int ix, int iy){
+    board[ix][iy] = turn;
+    empty_count--;
+
+    // loop through and flip each direction
+    for(int dx = -1; dx <= 1; dx++){
+      for(int dy = -1; dy <= 1; dy++){
+        if(dx != 0 || dy != 0){
+          if(checkDirection(ix, iy, dx, dy)){
+            flipDirection(ix, iy, dx, dy);
+          }
+        }
+      }
+    }
+
+    turn = -turn;
+    if(checkGameOver()){
+      int sum = 0;
+      for(int i = 0; i < 8; i++){
+        for(int j = 0; j < 8; j++){
+          sum += board[i][j];
+        }
+      }
+      return sum;
+    }
+    return 0;
+  }
+
+  private int ai_place(Square s){
+    return ai_place(s.x_index, s.y_index);
+  }
+
   void flipDirection(int ix, int iy, int dx, int dy){
     while(board[ix+dx][iy+dy]*turn < 0 && ix + dx >= 0 && ix + dx <= 7 && iy + dy >= 0 && iy + dy <= 7){
       ix = ix + dx;
@@ -122,13 +170,13 @@ class Board{
     // check in every direction
     return board[ix][iy] == 0 && 
       ( checkDirection(ix, iy, -1, -1) 
-      || checkDirection(ix, iy, -1, 0)
-      || checkDirection(ix, iy, -1, 1)
-      || checkDirection(ix, iy, 0, -1)
-      || checkDirection(ix, iy, 0, 1)
-      || checkDirection(ix, iy, 1, -1)
-      || checkDirection(ix, iy, 1, 0)
-      || checkDirection(ix, iy, 1, 1));
+        || checkDirection(ix, iy, -1, 0)
+        || checkDirection(ix, iy, -1, 1)
+        || checkDirection(ix, iy, 0, -1)
+        || checkDirection(ix, iy, 0, 1)
+        || checkDirection(ix, iy, 1, -1)
+        || checkDirection(ix, iy, 1, 0)
+        || checkDirection(ix, iy, 1, 1));
   }
 
   boolean checkDirection(int ix, int iy, int dx, int dy){
@@ -168,7 +216,7 @@ class Board{
   }
 
   boolean checkGameOver(){
-    return empty_count == 0 || generatePossibleMoves().size() == 0;
+    return empty_count == 0 || !validMovesRemain();
   }
 
   void gameover(){
@@ -204,11 +252,26 @@ class Board{
     return moves;
   }
 
-  private class Square{
-    int x_index, y_index;
-    Square(int x, int y){
-      x_index = x;
-      y_index = y;
+  //checks if the player has a valid move (more efficient than above method)
+  boolean validMovesRemain(){
+    for(int ix = 0; ix < 8; ix++){
+      for(int iy = 0; iy < 8; iy++){
+        if(board[ix][iy] == 0){
+          if(checkValid(ix, iy)){
+            return true;
+          }
+        }
+      }
     }
+    return false;
+  }
+
+}
+
+class Square{
+  int x_index, y_index;
+  Square(int x, int y){
+    x_index = x;
+    y_index = y;
   }
 }

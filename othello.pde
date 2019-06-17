@@ -1,8 +1,10 @@
 boolean changed = true;
 Board b;
+ComputerPlayer ai;
 void setup(){
   size(900, 700);
   b = new Board();
+  ai = new ComputerPlayer();
 }
 
 void draw(){
@@ -15,6 +17,19 @@ void draw(){
 void mousePressed(){
   b.mouseToPiece(mouseX, mouseY); 
   changed = true;
+}
+
+void keyPressed(){
+}
+
+void keyReleased(){
+  if( key == 'n' && b.turn == 1){
+    ai.move(b);
+    changed = true;
+  } else if (key == 'm' && b.turn == -1){
+    ai.move(b);
+    changed = true;
+  }
 }
 
 /*
