@@ -1,10 +1,11 @@
+import java.util.ArrayList;
 class Board{
 
   int[][] board = new int[8][8];
   int turn = 1;
   color dark = color(0, 255, 0);
   color light = color(0, 0, 255);
-  float sq_size = min((width-100)/8, (height-100)/8);
+  float sq_size = min((width-300)/8, (height-100)/8);
   int empty_count = 60;
 
   Board(){
@@ -53,14 +54,39 @@ class Board{
       x += sq_size;
       y = 50;
     }
+
+    // generate the score
+    // fix this later cuz this is pathetic
+    int s1 = 0;
+    int s2 = 0;
+    for(int i = 0; i < 8; i++){
+      for(int j = 0; j < 8; j++){
+        if(board[i][j] == 1){
+          s1++;
+        } else if(board[i][j] == -1){
+          s2++;
+        }
+      }
+    }
+    textSize(50);
+    fill(dark);
+    text("P1: " + s1,  width - 250, height*3.0/7.0);
+    fill(light);
+    text("P2: " + s2, width - 250, height*4.0/7.0);
+
+    if(turn == 1){
+      fill(dark);
+      circle(width - 50, height*2.85/7.0, 40);
+    } else {
+      fill(light);
+      circle(width - 50, height*3.85/7.0, 40);
+    }
   }
 
   void place(int ix, int iy){
     if(!checkValid(ix, iy)){
       println("Invalid Placement Try Again");
       return;
-    } else {
-      println("Valid");
     }
 
     // place the piece
@@ -79,6 +105,9 @@ class Board{
     }
 
     turn = -turn;
+    if(checkGameOver()){
+      gameover();
+    }
   }
 
   void flipDirection(int ix, int iy, int dx, int dy){
@@ -124,35 +153,62 @@ class Board{
     // first convert x, y to proper coordinates
     int ix = floor((x - 50)/sq_size);
     int iy = floor((y - 50)/sq_size);
-    println(ix, iy);
-    for(int dx = -1; dx <= 1; dx++){
-      for(int dy = -1; dy <= 1; dy++){
-        if(dx != 0 || dy != 0){
-          println(dx, dy, checkDirection(ix, iy, dx, dy));
-        }
-      }
+    if(ix < 0 || ix > 7 || iy < 0 || iy > 7){
+      return;
     }
+    /* println(ix, iy); */
+    /* for(int dx = -1; dx <= 1; dx++){ */
+    /*   for(int dy = -1; dy <= 1; dy++){ */
+    /*     if(dx != 0 || dy != 0){ */
+    /*       println(dx, dy, checkDirection(ix, iy, dx, dy)); */
+    /*     } */
+    /*   } */
+    /* } */
     place(ix, iy);
   }
 
   boolean checkGameOver(){
-    return empty_count == 0;
+    return empty_count == 0 || generatePossibleMoves().size() == 0;
   }
 
   void gameover(){
-    // loop through and count all the squares
-    int sum = 0;
+    // generate the score
+    // fix this later cuz this is pathetic
+    int s1 = 0;
+    int s2 = 0;
     for(int i = 0; i < 8; i++){
       for(int j = 0; j < 8; j++){
-        sum += board[i][j];
+        if(board[i][j] == 1){
+          s1++;
+        } else if(board[i][j] == -1){
+          s2++;
+        }
       }
     }
+    textSize(32);
+    text("GAME OVER!", width-200, 5*height/7.0);
+    changed = false;
+  }
 
-    if(sum > 0){
-      println("Team 1 Won " + (32 + sum) + " - " + (32 - sum));
-    } else if (sum < 0){
-      println("Team 2 Won " + (32 - sum) + " - " + (32 + sum));
+  ArrayList<Square> generatePossibleMoves(){
+    ArrayList<Square> moves = new ArrayList<Square>();
+    for(int ix = 0; ix < 8; ix++){
+      for(int iy = 0; iy < 8; iy++){
+        if(board[ix][iy] == 0){
+          if(checkValid(ix, iy)){
+            moves.add(new Square(ix, iy)); 
+          }
+        }
+      }
     }
+    return moves;
+  }
 
+  private class Square{
+    int x_index, y_index;
+    Square(int x, int y){
+      x_index = x;
+      y_index = y;
+    }
   }
 }

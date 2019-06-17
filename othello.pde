@@ -1,12 +1,15 @@
 boolean changed = true;
 Board b;
 void setup(){
-  size(700, 700);
+  size(900, 700);
   b = new Board();
 }
 
 void draw(){
+  if(changed){
     b.display();
+    changed = false;
+  }
 }
 
 void mousePressed(){
@@ -16,9 +19,8 @@ void mousePressed(){
 
 /*
  * NEXT STEPS:
- * Generate all possible moves
  * Better endgame condition (ie check for possible moves)
- * Display whose turn it is
  * Evaluation Function
  * Alpha Beta Pruning
+ * Maybe add highlights for possible moves?
  */
