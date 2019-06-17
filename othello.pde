@@ -1,6 +1,7 @@
 boolean changed = true;
 Board b;
 ComputerPlayer ai;
+boolean gameover = false;
 void setup(){
   size(900, 700);
   b = new Board();
@@ -23,12 +24,15 @@ void keyPressed(){
 }
 
 void keyReleased(){
-  if( key == 'n' && b.turn == 1){
+  if( key == 'n' && b.turn == 1 && !gameover){
     ai.move(b);
     changed = true;
-  } else if (key == 'm' && b.turn == -1){
+  } else if (key == 'm' && b.turn == -1 && !gameover){
     ai.move(b);
     changed = true;
+  } else if (keyCode == LEFT && !gameover){
+     b.turn = -b.turn;
+     changed = true;
   }
 }
 

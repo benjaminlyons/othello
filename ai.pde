@@ -1,6 +1,22 @@
 class ComputerPlayer{
   int player; // or -1
+  int overall_depth = 5;
   double evaluatePosition(Board b){
+    if(b.checkGameOver()){
+      int sum = 0;
+      for(int i = 0; i < 8; i++){
+        for(int j = 0; j < 8; j++){
+          sum += b.board[i][j];
+        }
+      }
+      if(sum * player > 0){
+        return 1000000;
+      } else if (sum * player < 0){
+        return -1000000;
+      } else {
+        return 0;
+      }
+    }
     /* println("Weights: " + weightBySquare(b)); */
     /* println("Count: " + countDifference(b)); */
     /* println("Mobility: " + evaluationByMobility(b)); */
@@ -21,16 +37,30 @@ class ComputerPlayer{
         }
       }
     }
-    double scalar = 10;
-    if(b.empty_count < 10){
-      
+    if(ai_score == 0){
+      return -1000000;
     }
-    return scalar*(ai_score - enemy_score);
+    if(enemy_score == 0){
+      return 1000000;
+    }
+    double dif = (ai_score - enemy_score) * 10;
+    if(b.empty_count <= overall_depth){
+      return dif;
+    } else if (b.empty_count < 10){
+      dif = 0.09*(10-b.empty_count)*dif + 0.1;
+    } else {
+      dif = dif * .001;
+    }
+    return dif;
   }
 
   double evaluationByMobility(Board b){
-    double scalar = max(min(5, b.empty_count - 5), 0);
-    return scalar * (double) b.generatePossibleMoves().size();
+    double movement = b.generatePossibleMoves().size();
+    movement *= 3;
+    if(b.empty_count <= 20){
+      movement = (1-0.05*(20-b.empty_count))*movement;
+    }
+    return movement;
   }
 
   // relative square values were found online
@@ -109,98 +139,58 @@ class ComputerPlayer{
         }
       }
     }
-    
-    double scalar;
-    if(b.empty_count > 20){
-        
-    } else {
 
+    double dif = sum_ai - sum_enemy;
+    if(b.empty_count <= 16){
+      dif = (b.empty_count * (32.0 - (double)b.empty_count) / 256.0) * dif;
     }
-    return scalar * (sum_ai - sum_enemy);
+    return dif;
   }
 
   void move(Board b){
     player = b.turn;
-    MoveEvalPair pair;
-    if(player == -1){
-      pair = minimax(b, 3);
-    } else {
-      pair = minimax(b, 5);
-    }
-    println("Picked:", b.turn, pair.mv.x_index, pair.mv.y_index, pair.eval);
-    println();
-    /* println(evaluatePosition(b)); */
-    b.place(pair.mv);
-  }
-
-  MoveEvalPair minimax(Board b, int depth){
     ArrayList<Square> moves = b.generatePossibleMoves();
-    if(depth == 1){
-      double optimalScore = -b.turn*player*10000000;
-      Square optimalMove = moves.get(0);
-      Board temp;
-      int res;
-      for(Square m : moves){
-        temp = new Board(b);
-        res = temp.ai_place(m);
-        double score;
-        if ( res * player > 0 ){
-          score = 100000000;  
-        } else if ( res * player == 0){
-          score = evaluatePosition(temp);
-        } else {
-          score = -100000000;
-        }
-
-        if(b.turn == player && score > optimalScore){
-          optimalScore = score;
-          optimalMove = m;
-        } else if (b.turn != player && score < optimalScore){
-          optimalScore = score;
-          optimalMove = m;
-        }
+    Square optimalMove = moves.get(0);
+    double optimalScore = -10000000;
+    Board temp;
+    double score;
+    // loop through each possible move
+    for(Square mv : moves){
+      temp = new Board(b); 
+      // make the move
+      temp.ai_place(mv);
+      score = minimax(temp, overall_depth-1);
+      // if its a good move, then use it
+      if(score > optimalScore){
+        optimalMove = mv;
+        optimalScore = score;
       }
-      /* println("Optimal: ", b.turn, optimalMove.x_index, optimalMove.y_index, optimalScore); */
-      /* println(); */
-      return new MoveEvalPair(optimalMove, optimalScore);
+    }
+
+    println("Picked: ", optimalMove.x_index, optimalMove.y_index, optimalScore);
+    println();
+    b.place(optimalMove);
+  } 
+
+  double minimax(Board b, int depth){
+    if(depth == 0 || b.checkGameOver() || !b.validMovesRemain()){
+      return evaluatePosition(b);
     } else {
-      double optimalScore = -b.turn*player*10000000;
-      Square optimalMove = moves.get(0);
-      Board temp;
-      int res;
-      for(Square m : moves){
-        temp = new Board(b);
-        res = temp.ai_place(m);
-        double score;
-        if ( res * player > 0 ){
-          score = 100000000;  
-        } else if ( res * player == 0){
-          MoveEvalPair bestNext = minimax(temp, depth-1);
-          score = bestNext.eval;
-        } else {
-          score = -100000000;
-        }
-
-        if(b.turn == player && score > optimalScore){
-          optimalScore = score;
-          optimalMove = m;
-        } else if (b.turn != player && score < optimalScore){
-          optimalScore = score;
-          optimalMove = m;
-        }
-      }
-      /* println("Optimal: ", b.turn, optimalMove.x_index, optimalMove.y_index, optimalScore); */
-      /* println(); */
-      return new MoveEvalPair(optimalMove, optimalScore);
+       double optimalScore = - player * b.turn * 1000000;
+       ArrayList<Square> moves = b.generatePossibleMoves();
+       Board temp;
+       double score;
+       for(Square mv : moves){
+         temp = new Board(b);
+         temp.ai_place(mv);
+         score = minimax(temp, depth - 1);
+         if(player == b.turn && score > optimalScore){
+            optimalScore = score;
+         } else if(player != b.turn && score < optimalScore){
+            optimalScore = score;
+         }
+       }
+       return optimalScore;
     }
   } 
 } 
-
-    class MoveEvalPair{
-      Square mv;
-      double eval;
-      MoveEvalPair(Square m, double ev){
-        mv = m;
-        eval = ev;
-      }
-    }

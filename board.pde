@@ -102,6 +102,7 @@ class Board{
     // place the piece
     board[ix][iy] = turn;
     empty_count--;
+    println(empty_count);
 
     // loop through and flip each direction
     for(int dx = -1; dx <= 1; dx++){
@@ -117,6 +118,10 @@ class Board{
     turn = -turn;
     if(checkGameOver()){
       gameover();
+      return;
+    }
+    if(!validMovesRemain()){
+      turn = -turn;
     }
   }
 
@@ -150,6 +155,9 @@ class Board{
         }
       }
       return sum;
+    }
+    if(!validMovesRemain()){
+      turn = -turn;
     }
     return 0;
   }
@@ -216,7 +224,18 @@ class Board{
   }
 
   boolean checkGameOver(){
-    return empty_count == 0 || !validMovesRemain();
+    if(empty_count == 0){
+      return true;
+    }
+    if(validMovesRemain()){
+      return false;
+    }
+    turn = -turn;
+    if(validMovesRemain()){
+      turn = -turn;
+      return false;
+    }
+    return true;
   }
 
   void gameover(){
@@ -235,6 +254,8 @@ class Board{
     }
     textSize(32);
     text("GAME OVER!", width-200, 5*height/7.0);
+    println("Game over");
+    gameover = true;
     changed = false;
   }
 
