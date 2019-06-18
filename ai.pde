@@ -1,6 +1,6 @@
 class ComputerPlayer{
   int player; // or -1
-  int overall_depth = 5;
+  int overall_depth = 6;
   double evaluatePosition(Board b){
     if(b.checkGameOver()){
       int sum = 0;
@@ -149,8 +149,8 @@ class ComputerPlayer{
 
   void move(Board b){
     player = b.turn;
-    if(b.empty_count < 8){
-       overall_depth = 8;
+    if(b.empty_count < 10){
+       overall_depth = b.empty_count;
     }
     ArrayList<Square> moves = b.generatePossibleMoves();
     Square optimalMove = moves.get(0);
@@ -164,7 +164,6 @@ class ComputerPlayer{
       temp.ai_place(mv);
       /* score = minimax(temp, overall_depth-1); */
       score = alphabeta(temp, overall_depth - 1, -10000000, 10000000);
-      println(score);
       // if its a good move, then use it
       if(score > optimalScore){
         optimalMove = mv;
