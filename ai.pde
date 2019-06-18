@@ -162,7 +162,9 @@ class ComputerPlayer{
       temp = new Board(b); 
       // make the move
       temp.ai_place(mv);
-      score = minimax(temp, overall_depth-1);
+      /* score = minimax(temp, overall_depth-1); */
+      score = alphabeta(temp, overall_depth - 1, -10000000, 10000000);
+      println(score);
       // if its a good move, then use it
       if(score > optimalScore){
         optimalMove = mv;
@@ -196,4 +198,56 @@ class ComputerPlayer{
        return optimalScore;
     }
   } 
+  
+  // a is minimum score we are assured of
+  // b is maximum score the minimum player is assured of
+  double alphabeta(Board b, int depth, double a, double beta){
+    if(depth == 0 || b.checkGameOver() || !b.validMovesRemain()){
+      return evaluatePosition(b);
+    }
+    // if we are trying to maximize
+    if(player == b.turn){
+      double optimalScore = -player*b.turn*1000000;
+      ArrayList<Square> moves = b.generatePossibleMoves();
+      Board temp;
+      double score;
+      for(Square mv : moves){
+        temp = new Board(b);
+        temp.ai_place(mv);
+        score = alphabeta(temp, depth-1, a, beta);
+
+        if(score  > a){
+          a = score;
+        }
+
+        if(score > optimalScore){
+          optimalScore = score;
+        }
+        if(beta <= a){
+          return optimalScore;
+        }
+      }
+      return optimalScore;
+    } else { // here we are trying to minimize
+      double optimalScore = -player*b.turn*1000000;
+      ArrayList<Square> moves = b.generatePossibleMoves();
+      Board temp;
+      double score;
+      for(Square mv : moves){
+        temp = new Board(b);
+        temp.ai_place(mv);
+        score = alphabeta(temp, depth-1, a, beta);
+        if(score < beta){
+          beta = score;
+        }
+        if(score < optimalScore){
+          optimalScore = score;
+        }
+        if(beta <= a){
+          return optimalScore;
+        }
+      }
+      return optimalScore;
+    }
+  }
 } 
