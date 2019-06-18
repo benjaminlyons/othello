@@ -149,6 +149,9 @@ class ComputerPlayer{
 
   void move(Board b){
     player = b.turn;
+    if(b.empty_count < 8){
+       overall_depth = 8;
+    }
     ArrayList<Square> moves = b.generatePossibleMoves();
     Square optimalMove = moves.get(0);
     double optimalScore = -10000000;
