@@ -57,9 +57,9 @@ class ComputerPlayer{
   double evaluationByMobility(Board b){
     double movement = b.generatePossibleMoves().size();
     movement *= 3;
-    if(b.empty_count <= 20){
-      movement = (1-0.05*(20-b.empty_count))*movement;
-    }
+    /* if(b.empty_count <= 20){ */
+    /*   movement = (1-0.05*(20-b.empty_count))*movement; */
+    /* } */
     return movement;
   }
 
@@ -141,15 +141,15 @@ class ComputerPlayer{
     }
 
     double dif = sum_ai - sum_enemy;
-    if(b.empty_count <= 16){
-      dif = (b.empty_count * (32.0 - (double)b.empty_count) / 256.0) * dif;
-    }
+    /* if(b.empty_count <= 16){ */
+    /*   dif = (b.empty_count * (32.0 - (double)b.empty_count) / 256.0) * dif; */
+    /* } */
     return dif;
   }
 
   void move(Board b){
     player = b.turn;
-    if(b.empty_count < 10){
+    if(b.empty_count < 15){
        overall_depth = b.empty_count;
     }
     ArrayList<Square> moves = b.generatePossibleMoves();
