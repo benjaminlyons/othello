@@ -44,23 +44,28 @@ class ComputerPlayer{
       return 1000000;
     }
     double dif = (ai_score - enemy_score) * 10;
-    if(b.empty_count <= overall_depth){
-      return dif;
-    } else if (b.empty_count < 10){
-      dif = 0.09*(10-b.empty_count)*dif + 0.1;
-    } else {
+    /* if(b.empty_count <= overall_depth){ */
+    /*   return dif; */
+    /* } else if (b.empty_count < 10){ */
+    /*   dif = 0.09*(10-b.empty_count)*dif + 0.1; */
+    /* } else { */
       dif = dif * .001;
-    }
+    /* } */
     return dif;
   }
 
   double evaluationByMobility(Board b){
-    double movement = b.generatePossibleMoves().size();
-    movement *= 3;
+    /* double movement = b.generatePossibleMoves().size(); */
+    /* movement *= 3; */
     /* if(b.empty_count <= 20){ */
     /*   movement = (1-0.05*(20-b.empty_count))*movement; */
     /* } */
-    return movement;
+    double ai_movement = b.generatePossibleMoves().size();
+    b.turn = -b.turn;
+    double enemy_movement = b.generatePossibleMoves().size();
+    b.turn = -b.turn;
+    double dif = ai_movement - enemy_movement;
+    return dif * 10;
   }
 
   // relative square values were found online
