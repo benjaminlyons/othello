@@ -1,10 +1,11 @@
 import java.util.ArrayList;
+import java.util.List;
 class Board{
 
   int[][] board = new int[8][8];
   int turn = 1;
-  color dark = color(0, 255, 0);
-  color light = color(0, 0, 255);
+  color dark = color(0, 0, 0);
+  color light = color(255, 255, 255);
   float sq_size = min((width-300)/8, (height-100)/8);
   int empty_count = 60;
 
@@ -43,19 +44,25 @@ class Board{
     for( int ix = 0; ix < 8; ix++){
       for( int iy = 0; iy < 8; iy++ ){
         if(dark_square){
-          fill(0);
+          stroke(34, 139, 34);
+          strokeWeight(4);
+          fill(50, 205, 50);
         } else {
-          fill(255);
+          strokeWeight(4);
+          stroke(34, 139, 34);
+          fill(50, 205, 50);
         }
         square(x, y, sq_size);
 
         //display the pieces
         if(board[ix][iy] > 0){
+          stroke(dark);
           fill(dark);
-          circle(x+sq_size/2, y+sq_size/2, 0.9*sq_size);
+          circle(x+sq_size/2, y+sq_size/2, 0.7*sq_size);
         } else if(board[ix][iy] < 0){
+          stroke(light);
           fill(light);
-          circle(x+sq_size/2, y+sq_size/2, 0.9*sq_size);
+          circle(x+sq_size/2, y+sq_size/2, 0.7*sq_size);
         }
         y += sq_size;
         dark_square = !dark_square;
@@ -64,6 +71,21 @@ class Board{
       x += sq_size;
       y = 50;
     }
+
+    // display possible moves
+    List<Square> moves = b.generatePossibleMoves();
+    int ix, iy;
+    for(Square m : moves){
+      ix = m.x_index;
+      iy = m.y_index;
+      noFill();
+      stroke(255, 0, 0);
+      strokeWeight(3);
+      if(showMoves){
+        circle(50 + ix*sq_size + sq_size/2, 50.0 + iy*sq_size + sq_size/2, 0.7*sq_size);
+      }
+    }
+    strokeWeight(1);
 
     // generate the score
     // fix this later cuz this is pathetic
@@ -79,8 +101,10 @@ class Board{
       }
     }
     textSize(50);
+    stroke(dark);
     fill(dark);
     text("P1: " + s1,  width - 250, height*3.0/7.0);
+    stroke(light);
     fill(light);
     text("P2: " + s2, width - 250, height*4.0/7.0);
 

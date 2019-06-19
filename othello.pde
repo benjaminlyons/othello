@@ -2,6 +2,7 @@ boolean changed = true;
 Board b;
 ComputerPlayer ai;
 boolean gameover = false;
+boolean showMoves = true;
 void setup(){
   size(900, 700);
   b = new Board();
@@ -33,13 +34,9 @@ void keyReleased(){
   } else if (keyCode == LEFT && !gameover){
      b.turn = -b.turn;
      changed = true;
+  } else if (key == 'h'){
+     showMoves = !showMoves;
+     changed = true;
   }
 }
 
-/*
- * NEXT STEPS:
- * Better endgame condition (ie check for possible moves)
- * Evaluation Function
- * Alpha Beta Pruning
- * Maybe add highlights for possible moves?
- */
