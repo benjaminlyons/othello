@@ -68,7 +68,9 @@ class ComputerPlayer{
     return dif * 10;
   }
 
-  // relative square values were found online
+  // The relative square values were found somewhere online a while ago
+  // but I can't find them again. I made 4 small changes to evaluation of
+  // the corner which seems to have worked great for me
   double weightBySquare(Board b){
     double[][] weights = new double[8][8];
 

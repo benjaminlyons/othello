@@ -1,3 +1,8 @@
+/* NOTE: NEED TO REMEMBER TO GO BACK THROUGH CODE AND REFACTOR
+ * right now, this code is a complete mess and honestly makes me feel
+ * sick. i think its working pretty well though so there's that...
+ *
+ */
 boolean changed = true;
 Board b;
 ComputerPlayer ai;
