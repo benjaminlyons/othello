@@ -8,6 +8,7 @@ Board b;
 ComputerPlayer ai;
 boolean gameover = false;
 boolean showMoves = true;
+Board last;
 void setup(){
   /* size(900, 700); */
   size(900, 700);
@@ -15,6 +16,7 @@ void setup(){
   surface.setLocation(100, 100);
   b = new Board();
   ai = new ComputerPlayer();
+  last = new Board();
 }
 
 void draw(){
@@ -25,6 +27,7 @@ void draw(){
 }
 
 void mousePressed(){
+  last = new Board(b);
   b.mouseToPiece(mouseX, mouseY); 
   changed = true;
 }
@@ -34,22 +37,29 @@ void keyPressed(){
 
 void keyReleased(){
   if( key == 'n' && b.turn == 1 && !gameover){
+    last = new Board(b);
     ai.move(b);
     changed = true;
   } else if (key == 'm' && b.turn == -1 && !gameover){
+    last = new Board(b);
     ai.move(b);
     changed = true;
-  } else if (keyCode == LEFT && !gameover){
-     b.turn = -b.turn;
-     changed = true;
+  } else if (keyCode == DOWN && !gameover){
+    last = new Board(b);
+    b.turn = -b.turn;
+    changed = true;
   } else if (key == 'h'){
-     showMoves = !showMoves;
-     changed = true;
+    showMoves = !showMoves;
+    changed = true;
   } else if (key == 'r'){
-     b = new Board();
-     ai = new ComputerPlayer();
-     changed = true;
-     gameover = false;
+    b = new Board();
+    last = new Board();
+    ai = new ComputerPlayer();
+    changed = true;
+    gameover = false;
+  } else if (key == 'u'){
+    b = last;
+    changed = true;
   }
 }
 
