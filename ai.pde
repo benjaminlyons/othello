@@ -22,7 +22,7 @@ class ComputerPlayer{
     /* println("Mobility: " + evaluationByMobility(b)); */
     /* println("Total: " + (weightBySquare(b) + countDifference(b) + evaluationByMobility(b))); */
     /* println(); */
-    return weightBySquare(b) + countDifference(b) + evaluationByMobility(b);   
+    return weightBySquare(b) + evaluationByMobility(b);   
   }
 
   double countDifference(Board b){
@@ -76,10 +76,14 @@ class ComputerPlayer{
     // way to do this than simply hard coding it like this  
     // cuz this makes me want to puke :(
     // edges
-    weights[0][0] = 150;
-    weights[0][7] = 150;
-    weights[7][0] = 150;
-    weights[7][7] = 150;
+    /* weights[0][0] = 150; */
+    /* weights[0][7] = 150; */
+    /* weights[7][0] = 150; */
+    /* weights[7][7] = 150; */
+    weights[0][0] = 200;
+    weights[0][7] = 200;
+    weights[7][0] = 200;
+    weights[7][7] = 200;
     weights[1][0] = -8;
     weights[1][7] = -8;
     weights[6][0] = -8;
