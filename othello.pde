@@ -4,7 +4,10 @@ ComputerPlayer ai;
 boolean gameover = false;
 boolean showMoves = true;
 void setup(){
+  /* size(900, 700); */
   size(900, 700);
+  surface.setSize((int)(.8*displayHeight+200), (int)(.8*displayHeight));
+  surface.setLocation(100, 100);
   b = new Board();
   ai = new ComputerPlayer();
 }
@@ -37,6 +40,11 @@ void keyReleased(){
   } else if (key == 'h'){
      showMoves = !showMoves;
      changed = true;
+  } else if (key == 'r'){
+     b = new Board();
+     ai = new ComputerPlayer();
+     changed = true;
+     gameover = false;
   }
 }
 
