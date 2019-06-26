@@ -7,3 +7,4 @@ These are the controls:
 - To have the AI make a move for player 2, press 'm'
 - To toggle the display of possible moves, press 'h'
 - To reset the game and return to the starting position, press 'r'
+- To undo one move press 'u'. Note that you can only undo ONE move
