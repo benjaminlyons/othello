@@ -1,6 +1,7 @@
 class ComputerPlayer{
   int player; // or -1
   int overall_depth = 6;
+  int cutoff = 15;
   double evaluatePosition(Board b){
     if(b.checkGameOver()){
       int sum = 0;
@@ -160,7 +161,7 @@ class ComputerPlayer{
 
   void move(Board b){
     player = b.turn;
-    if(b.empty_count < 15){
+    if(b.empty_count < cutoff){
        overall_depth = b.empty_count;
     }
     ArrayList<Square> moves = b.generatePossibleMoves();
